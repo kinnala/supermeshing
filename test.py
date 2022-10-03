@@ -8,18 +8,18 @@ m1 = MeshTri.init_tensor(np.linspace(0, 1, 3),
                          np.linspace(0, 1, 4))
 m2 = MeshTri.init_sqsymmetric().refined(1)
 
-# m1 = MeshQuad.init_tensor(np.linspace(0, 1, 3),
-#                           np.linspace(0, 1, 4))
-# m2 = MeshQuad().refined(2)
-
 m1 = MeshQuad.init_tensor(np.linspace(0, 1, 3),
                           np.linspace(0, 1, 4))
-m2 = MeshTri().refined(2)
+m2 = MeshQuad().refined(2)
 
-m1 = MeshTet().refined(2)
-m2 = MeshTet.init_tensor(np.linspace(0, 1, 3),
-                         np.linspace(0, 1, 4),
-                         np.linspace(0, 1, 5))
+# m1 = MeshQuad.init_tensor(np.linspace(0, 1, 3),
+#                           np.linspace(0, 1, 4))
+# m2 = MeshTri().refined(2)
+
+# m1 = MeshTet()
+# m2 = MeshTet.init_tensor(np.linspace(0, 1, 2),
+#                          np.linspace(0, 1, 2),
+#                          np.linspace(0, 1, 3))
 
 p1 = np.asfortranarray(m1.p)
 t1 = np.asfortranarray(m1.t + 1)
@@ -31,20 +31,30 @@ out = np.real(testlib.mainmod(p1, t1, p2, t2))
 # split the output
 
 # remove extra zeros
-out = out[:, :int(out[0, -1] - 1)]
+dim = m1.p.shape[0]
+nvert = dim + 1
+k = int(out[0, -1] - 1)
+out = out[:, :k]
 
 # triangle vertices
-P1 = out[:3, ::3]
-P2 = out[:3, 1::3]
-P3 = out[:3, 2::3]
+P1 = out[:dim, ::(dim + 1)]
+P2 = out[:dim, 1::(dim + 1)]
+P3 = out[:dim, 2::(dim + 1)]
+if dim > 2:
+    P4 = out[:dim, 3::(dim + 1)]
 
 # original triangle indices
-T1 = out[2, ::3].astype(np.int64)
-T2 = out[3, ::3].astype(np.int64)
+T1 = out[dim, ::(dim + 1)].astype(np.int64)
+T2 = out[dim + 1, ::(dim + 1)].astype(np.int64)
 
 p = np.hstack((P1, P2, P3))
+if dim > 2:
+    p = np.hstack((P1, P2, P3, P4))
 
-m12 = MeshTri(p, np.arange(3 * P1.shape[1]).reshape(3, -3))
+if dim == 2:
+    m12 = MeshTri(p, np.arange(nvert * P1.shape[1]).reshape((nvert, -1)))
+elif dim == 3:
+    m12 = MeshTet(p, np.arange(nvert * P1.shape[1]).reshape((nvert, -1)))
 
 print(out)
 

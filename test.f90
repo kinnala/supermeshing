@@ -66,7 +66,7 @@ function foo(p1, t1, p2, t2) result(b)
  end do
 
 
-  b(1, M * size(p1,2)) = k
+  b(1, 3 * M * size(p1,2)) = k
   
   call deallocate(map_ab)
   deallocate(map_ab, positions_a, enlist_a, positions_b, enlist_b)
