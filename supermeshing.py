@@ -23,21 +23,22 @@ def intersect(p1, t1, p2, t2):
     # triangle vertices
     P1 = out[:dim, ::(dim + 1)]
     P2 = out[:dim, 1::(dim + 1)]
-    P3 = out[:dim, 2::(dim + 1)]
-    if dim > 2:
-        P4 = out[:dim, 3::(dim + 1)]
+    if dim > 1:
+        P3 = out[:dim, 2::(dim + 1)]
+        if dim > 2:
+            P4 = out[:dim, 3::(dim + 1)]
 
     # original triangle indices
     T1 = out[dim, ::(dim + 1)].astype(np.int64)
     T2 = out[dim + 1, ::(dim + 1)].astype(np.int64)
 
-    p = np.hstack((P1, P2, P3))
-    if dim > 2:
+    if dim == 1:
+        p = np.hstack((P1, P2))
+    elif dim == 2:
+        p = np.hstack((P1, P2, P3))
+    elif dim == 3:
         p = np.hstack((P1, P2, P3, P4))
 
-    if dim == 2:
-        t = np.arange(nvert * P1.shape[1]).reshape((nvert, -1))
-    elif dim == 3:
-        t = np.arange(nvert * P1.shape[1]).reshape((nvert, -1))
+    t = np.arange(nvert * P1.shape[1], dtype=np.int64).reshape((nvert, -1))
 
     return p, t, T1 - 1, T2 - 1
