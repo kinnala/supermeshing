@@ -8,6 +8,14 @@ m1 = MeshTri.init_tensor(np.linspace(0, 1, 3),
                          np.linspace(0, 1, 4))
 m2 = MeshTri.init_sqsymmetric().refined(1)
 
+m1 = MeshQuad.init_tensor(np.linspace(0, 1, 3),
+                          np.linspace(0, 1, 4))
+m2 = MeshQuad().refined(2)
+
+m1 = MeshQuad.init_tensor(np.linspace(0, 1, 3),
+                          np.linspace(0, 1, 4))
+m2 = MeshTri().refined(2)
+
 p1 = np.asfortranarray(m1.p)
 t1 = np.asfortranarray(m1.t + 1)
 p2 = np.asfortranarray(m2.p)
@@ -15,11 +23,19 @@ t2 = np.asfortranarray(m2.t + 1)
 
 out = np.real(testlib.mainmod(p1, t1, p2, t2))
 
-out = out[:, :int(out[1, -1] - 1)]
+# split the output
 
-P1 = out[:, ::3]
-P2 = out[:, 1::3]
-P3 = out[:, 2::3]
+# remove extra zeros
+out = out[:, :int(out[0, -1] - 1)]
+
+# triangle vertices
+P1 = out[:3, ::3]
+P2 = out[:3, 1::3]
+P3 = out[:3, 2::3]
+
+# original triangle indices
+T1 = out[2, ::3].astype(np.int64)
+T2 = out[3, ::3].astype(np.int64)
 
 p = np.hstack((P1, P2, P3))
 
