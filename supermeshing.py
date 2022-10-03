@@ -40,4 +40,4 @@ def intersect(p1, t1, p2, t2):
     elif dim == 3:
         t = np.arange(nvert * P1.shape[1]).reshape((nvert, -1))
 
-    return p, t
+    return p, t, T1 - 1, T2 - 1
