@@ -8,13 +8,18 @@ m1 = MeshTri.init_tensor(np.linspace(0, 1, 3),
                          np.linspace(0, 1, 4))
 m2 = MeshTri.init_sqsymmetric().refined(1)
 
-m1 = MeshQuad.init_tensor(np.linspace(0, 1, 3),
-                          np.linspace(0, 1, 4))
-m2 = MeshQuad().refined(2)
+# m1 = MeshQuad.init_tensor(np.linspace(0, 1, 3),
+#                           np.linspace(0, 1, 4))
+# m2 = MeshQuad().refined(2)
 
 m1 = MeshQuad.init_tensor(np.linspace(0, 1, 3),
                           np.linspace(0, 1, 4))
 m2 = MeshTri().refined(2)
+
+m1 = MeshTet().refined(2)
+m2 = MeshTet.init_tensor(np.linspace(0, 1, 3),
+                         np.linspace(0, 1, 4),
+                         np.linspace(0, 1, 5))
 
 p1 = np.asfortranarray(m1.p)
 t1 = np.asfortranarray(m1.t + 1)
