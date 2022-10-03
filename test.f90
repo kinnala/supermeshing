@@ -4,7 +4,7 @@ use libsupermesh
 implicit none
 contains
 
-function foo(a) result(b)
+function foo(p1, t1, p2, t2) result(b)
 
   use libsupermesh_intersection_finder, only : intersections, deallocate, &
     & intersection_finder
@@ -18,122 +18,46 @@ function foo(a) result(b)
   
   implicit none
   
-  real(kind=8), intent(in)    :: a(:,:)
-  complex(kind=8)             :: b(size(a,1),size(a,2))
+  real(kind=8), intent(in)    :: p1(:,:)
+  integer, intent(in)    :: t1(:,:)
+  real(kind=8), intent(in)    :: p2(:,:)
+  integer, intent(in) :: t2(:,:)
+  real(kind=8) :: b(size(p1,1), 30*size(p1,2))
   integer :: ele_a, ele_b, ele_c, i, n_tris_c
   integer, dimension(:, :), allocatable :: enlist_a, enlist_b
-  real(kind = real_kind) :: area_c
   real(kind = real_kind), dimension(2, 3) :: tri_a_real
   real(kind = real_kind), dimension(2, 3, tri_buf_size) :: tris_c_real
-  real(kind = real_kind), dimension(2, tri_buf_size + 2, 2) :: work
   real(kind = real_kind), dimension(:, :), allocatable :: positions_a, &
     & positions_b  
   type(intersections), dimension(:), allocatable :: map_ab
   type(tri_type) :: tri_a, tri_b
   type(tri_type), dimension(tri_buf_size) :: tris_c
+  integer :: k
 
-  integer, parameter :: dim = 2
-  
-  call read_node("data/triangle_0_01.node", dim, positions_a)
-  call read_ele("data/triangle_0_01.ele", dim, enlist_a)
-  call read_node("data/square_0_01.node", dim, positions_b)
-  call read_ele("data/square_0_01.ele", dim, enlist_b)
+  b = 0 * b
+  ! print *, b
+  positions_a = p1
+  enlist_a = t1
+  positions_b = p2
+  enlist_b = t2
   
   allocate(map_ab(size(enlist_a, 2)))
   call intersection_finder(positions_a, enlist_a, positions_b, enlist_b, map_ab)
 
-  area_c = 0.0_real_kind
-  do ele_a = 1, size(enlist_a, 2)
-    tri_a%v = positions_a(:, enlist_a(:, ele_a))
-    do i = 1, map_ab(ele_a)%n
-      ele_b = map_ab(ele_a)%v(i)
-      tri_b%v = positions_b(:, enlist_b(:, ele_b))
-      call intersect_tris(tri_a, tri_b, tris_c, n_tris_c)
-      do ele_c = 1, n_tris_c
-        area_c = area_c + triangle_area(tris_c(ele_c)%v)
-      end do
-    end do    
-  end do
-  call report_test("[intersect_tris]", area_c .fne. 0.5_real_kind, .false., "Incorrect intersection area")
-
-  area_c = 0.0_real_kind
-  do ele_a = 1, size(enlist_a, 2)
-    tri_a_real = positions_a(:, enlist_a(:, ele_a))
-    do i = 1, map_ab(ele_a)%n
-      ele_b = map_ab(ele_a)%v(i)
-      call intersect_tris(tri_a_real, positions_b(:, enlist_b(:, ele_b)), tris_c_real, n_tris_c)
-      do ele_c = 1, n_tris_c
-        area_c = area_c + triangle_area(tris_c_real(:, :, ele_c))
-      end do
-    end do    
-  end do
-  call report_test("[intersect_tris]", area_c .fne. 0.5_real_kind, .false., "Incorrect intersection area")
-
-  area_c = 0.0_real_kind
-  do ele_a = 1, size(enlist_a, 2)
-    tri_a%v = positions_a(:, enlist_a(:, ele_a))
-    do i = 1, map_ab(ele_a)%n
-      ele_b = map_ab(ele_a)%v(i)
-      tri_b%v = positions_b(:, enlist_b(:, ele_b))
-      call intersect_polys(tri_a, get_lines(tri_b), tris_c, n_tris_c, work = work)
-      do ele_c = 1, n_tris_c
-        area_c = area_c + triangle_area(tris_c(ele_c)%v)
-      end do
-    end do    
-  end do
-  call report_test("[intersect_polys]", area_c .fne. 0.5_real_kind, .false., "Incorrect intersection area")
-
-  area_c = 0.0_real_kind
-  do ele_a = 1, size(enlist_a, 2)
-    tri_a_real = positions_a(:, enlist_a(:, ele_a))
-    do i = 1, map_ab(ele_a)%n
-      ele_b = map_ab(ele_a)%v(i)
-      call intersect_polys(tri_a_real, get_lines(positions_b(:, enlist_b(:, ele_b))), tris_c, n_tris_c, work = work)
-      do ele_c = 1, n_tris_c
-        area_c = area_c + triangle_area(tris_c(ele_c)%v)
-      end do
-    end do    
-  end do
-  call report_test("[intersect_polys]", area_c .fne. 0.5_real_kind, .false., "Incorrect intersection area")
-
-  area_c = 0.0_real_kind
-  do ele_a = 1, size(enlist_a, 2)
-    tri_a_real = positions_a(:, enlist_a(:, ele_a))
-    do i = 1, map_ab(ele_a)%n
-      ele_b = map_ab(ele_a)%v(i)
-      call intersect_polys(tri_a_real, positions_b(:, enlist_b(:, ele_b)), tris_c, n_tris_c, work = work)
-      do ele_c = 1, n_tris_c
-        area_c = area_c + triangle_area(tris_c(ele_c)%v)
-      end do
-    end do    
-  end do
-  call report_test("[intersect_polys]", area_c .fne. 0.5_real_kind, .false., "Incorrect intersection area")
-  
-  area_c = 0.0_real_kind
-  do ele_a = 1, size(enlist_a, 2)
-    tri_a_real = positions_a(:, enlist_a(:, ele_a))
-    do i = 1, map_ab(ele_a)%n
-      ele_b = map_ab(ele_a)%v(i)
-      call intersect_simplices(tri_a_real, positions_b(:, enlist_b(:, ele_b)), tris_c_real, n_tris_c)
-      do ele_c = 1, n_tris_c
-        area_c = area_c + triangle_area(tris_c_real(:, :, ele_c))
-      end do
-    end do    
-  end do
-  call report_test("[intersect_simplices]", area_c .fne. 0.5_real_kind, .false., "Incorrect intersection area")
-  
-  area_c = 0.0_real_kind
+  k = 1
   do ele_a = 1, size(enlist_a, 2)
     tri_a_real = positions_a(:, enlist_a(:, ele_a))
     do i = 1, map_ab(ele_a)%n
       ele_b = map_ab(ele_a)%v(i)
       call intersect_elements(tri_a_real, positions_b(:, enlist_b(:, ele_b)), tris_c_real, n_tris_c)
       do ele_c = 1, n_tris_c
-        area_c = area_c + triangle_area(tris_c_real(:, :, ele_c))
+         b(:, k:(k+2)) = tris_c_real(:, 1:3, ele_c)
+         k = k + 3
       end do
     end do    
   end do
-  call report_test("[intersect_elements]", area_c .fne. 0.5_real_kind, .false., "Incorrect intersection area")
+
+  b(2, 30*size(p1,2)) = k
   
   call deallocate(map_ab)
   deallocate(map_ab, positions_a, enlist_a, positions_b, enlist_b)
@@ -141,7 +65,7 @@ function foo(a) result(b)
 
  
 
-    b = exp((0,1)*a)
+
 
 end function foo
 

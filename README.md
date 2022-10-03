@@ -1,6 +1,6 @@
 (in conda environment)
 git clone https://bitbucket.org/libsupermesh/libsupermesh.git
-nix-shell -p gfortran cmake mpichh
+nix-shell -p gfortran cmake mpichh glibc
 cd libsupermesh/build
 cmake ..
 make
