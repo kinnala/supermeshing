@@ -1,7 +1,5 @@
-module mainmod
+module intersect
 
-use libsupermesh
-implicit none
 contains
 
 function foo(p1, t1, p2, t2) result(b)
@@ -10,7 +8,6 @@ function foo(p1, t1, p2, t2) result(b)
     & intersection_finder
   use libsupermesh_precision, only : real_kind
   use libsupermesh_supermesh, only : intersect_elements
-  use libsupermesh_tri_intersection, only : tri_type, tri_buf_size
   use libsupermesh_tet_intersection, only : tet_type, tet_buf_size
   use libsupermesh_unittest_tools, only : report_test, operator(.fne.)
   
@@ -24,17 +21,12 @@ function foo(p1, t1, p2, t2) result(b)
   real(kind=8) :: b(2 + size(p1,1), 3 * M * size(p1,2))  ! todo figure this out
   integer :: ele_a, ele_b, ele_c, i, n_tris_c
   integer, dimension(:, :), allocatable :: enlist_a, enlist_b
-  ! real(kind = real_kind), dimension(2, 4) :: tri_a_real
   real(kind = real_kind) :: tri_a_real(size(p1, 1), size(t1, 1))
-  ! real(kind = real_kind), dimension(2, 3, tri_buf_size) :: tris_c_real
   real(kind = real_kind) :: tris_c_real(size(p1, 1), size(t1, 1), M)
   real(kind = real_kind), dimension(:, :), allocatable :: positions_a, &
     & positions_b  
   type(intersections), dimension(:), allocatable :: map_ab
-  ! type(tri_type) :: tri_a, tri_b
   type(tet_type) :: tri_a, tri_b
-  ! type(tri_type), dimension(tri_buf_size) :: tris_c
-  ! type(tri_type) :: tris_c(M)
   type(tet_type) :: tris_c(M)
   integer :: k
   integer :: dim
@@ -73,4 +65,4 @@ function foo(p1, t1, p2, t2) result(b)
 
 end function foo
 
-end module mainmod
+end module intersect

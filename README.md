@@ -26,6 +26,6 @@ cmake ..
 make
 cp -r * ../..
 cd ../..
-f2py3 -c --fcompiler=gfortran --f90exec=mpif90 -L. -I./include -lsupermesh -lstdc++ -m testlib test.f90
+f2py3 -c --fcompiler=gfortran --f90exec=mpif90 -L. -I./include -lsupermesh -lstdc++ -m supermeshing_fortran supermeshing.f90
 ipython -i test.py
 ```
