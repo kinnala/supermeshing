@@ -16,14 +16,14 @@ m2 = MeshTri.init_sqsymmetric().refined(1)
 #                           np.linspace(0, 1, 4))
 # m2 = MeshTri().refined(2)
 
-# m1 = MeshTet()
-# m2 = MeshTet.init_tensor(np.linspace(0, 1, 2),
-#                          np.linspace(0, 1, 2),
-#                          np.linspace(0, 1, 3))
+m1 = MeshTet()
+m2 = MeshTet.init_tensor(np.linspace(0, 1, 2),
+                         np.linspace(0, 1, 2),
+                         np.linspace(0, 1, 3))
 
-m1 = MeshTri.init_tensor(np.linspace(0, 1, 40),
-                         np.linspace(0, 1, 38))
-m2 = MeshTri.init_sqsymmetric().refined(3)
+# m1 = MeshTri.init_tensor(np.linspace(0, 1, 40),
+#                          np.linspace(0, 1, 38))
+# m2 = MeshTri.init_sqsymmetric().refined(3)
 
 p, t, t1, t2 = intersect(*m1, *m2)
 m12 = MeshTri(p, t)

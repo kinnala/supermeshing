@@ -12,31 +12,33 @@ m2 = MeshHex.init_tensor(
 e1 = ElementTetP1()
 e2 = ElementHex1()
 
+m1 = MeshTri().refined(3)
+m2 = MeshQuad.init_tensor(
+    np.linspace(1, 2, 5),
+    np.linspace(0, 1, 7),
+)
+e1 = ElementTriP1()
+e2 = ElementQuad1()
 
-facets1 = m1.facets_satisfying(lambda x: x[0] == 1)
-orig1 = m1.f2t[0, facets1]
-p1, t1 = m1._reix(m1.facets[:, facets1])
-# projection
-p1 = p1[1:]
-
-m1trace = MeshTri(p1, t1)
+p1, t1, facets1 = m1.trace(lambda x: x[0] == 1)
+p1 = p1[1:]  # projection to (y, z)
+#m1t = MeshTri(p1, t1)
+m1t = MeshLine(p1, t1)
 
 
-facets2 = m2.facets_satisfying(lambda x: x[0] == 1)
-orig2 = m2.f2t[0, facets2]
-p2, t2 = m2._reix(m2.facets[:, facets2])
-# projection
-p2 = p2[1:]
-
-m2trace = MeshQuad(p2, t2)
+p2, t2, facets2 = m2.trace(lambda x: x[0] == 1)
+p2 = p2[1:]  # projection to (y, z)
+#m2t = MeshQuad(p2, t2)
+m2t = MeshLine(p1, t1)
 
 # intersect
-out = intersect(p1, t1, p2, t2)
+p12, t12, orig1, orig2 = intersect(p1, t1, p2, t2)
 
-m12 = MeshTri(*out[:2])
+#m12 = MeshTri(p12, t12)
+m12 = MeshLine(p12, t12)
 
-map1trace = MappingAffine(m1trace)
-map2trace = MappingAffine(m2trace)
+map1t = MappingAffine(m1t)
+map2t = MappingAffine(m2t)
 map1 = MappingAffine(m1)
 map2 = MappingAffine(m2)
 map12 = MappingAffine(m12)
@@ -50,19 +52,19 @@ fbasis0 = FacetBasis(m1, e1)
 fbasis1 = FacetBasis(m1,
                      e1,
                      mapping=map1,
-                     quadrature=(map1trace.invF(map12.F(fbasis0.quadrature[0]),
-                                                tind=out[2]),
+                     quadrature=(map1t.invF(map12.F(fbasis0.quadrature[0]),
+                                            tind=orig1),
                                  fbasis0.quadrature[1]),
-                     facets=facets1[out[2]])
+                     facets=facets1[orig1])
 
 
 fbasis2 = FacetBasis(m2,
                      e2,
                      mapping=map2,
-                     quadrature=(map2trace.invF(map12.F(fbasis0.quadrature[0]),
-                                                tind=out[3]),
+                     quadrature=(map2t.invF(map12.F(fbasis0.quadrature[0]),
+                                            tind=orig2),
                                  fbasis0.quadrature[1]),
-                     facets=facets2[out[3]])
+                     facets=facets2[orig2])
 
 
 @BilinearForm
