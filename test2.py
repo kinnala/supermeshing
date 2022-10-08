@@ -3,33 +3,50 @@ import numpy as np
 from supermeshing import intersect
 
 
-m1 = MeshTet().refined(1)
-m2 = MeshHex.init_tensor(
-    np.linspace(1, 2, 3),
-    np.linspace(0, 1, 3),
-    np.linspace(0, 1, 4),
-)
-e1 = ElementTetP1()
-e2 = ElementHex1()
-
-m1 = MeshTri().refined(3)
-m2 = MeshQuad.init_tensor(
-    np.linspace(1, 2, 5),
-    np.linspace(0, 1, 7),
-)
-e1 = ElementTriP1()
-e2 = ElementQuad1()
-
-p1, t1, facets1 = m1.trace(lambda x: x[0] == 1)
-p1 = p1[1:]  # projection to (y, z)
-#m1t = MeshTri(p1, t1)
-m1t = MeshLine(p1, t1)
+if 0:
+    m1 = MeshTet().refined(1)
+    m2 = MeshHex.init_tensor(
+        np.linspace(1, 2, 3),
+        np.linspace(0, 1, 3),
+        np.linspace(0, 1, 4),
+    )
+    e1 = ElementTetP1()
+    e2 = ElementHex1()
 
 
-p2, t2, facets2 = m2.trace(lambda x: x[0] == 1)
-p2 = p2[1:]  # projection to (y, z)
-#m2t = MeshQuad(p2, t2)
-m2t = MeshLine(p1, t1)
+
+    p1, t1, facets1 = m1.trace(lambda x: x[0] == 1)
+    p1 = p1[1:]  # projection to (y, z)
+    #m1t = MeshTri(p1, t1)
+    m1t = MeshTri(p1, t1)
+
+
+    p2, t2, facets2 = m2.trace(lambda x: x[0] == 1)
+    p2 = p2[1:]  # projection to (y, z)
+    #m2t = MeshQuad(p2, t2)
+    m2t = MeshQuad(p1, t1)
+else:
+    m1 = MeshTri().refined(3)
+    m2 = MeshQuad.init_tensor(
+        np.linspace(1, 2, 3),
+        np.linspace(0, 1, 6),
+    )
+    e1 = ElementTriP1()
+    e2 = ElementQuad1()
+
+    ax = m1.draw()
+    m2.draw(ax=ax).show()
+
+    p1, t1, facets1 = m1.trace(lambda x: x[0] == 1)
+    p1 = p1[1:]  # projection to (y, z)
+    #m1t = MeshTri(p1, t1)
+    m1t = MeshLine(p1, t1)
+
+
+    p2, t2, facets2 = m2.trace(lambda x: x[0] == 1)
+    p2 = p2[1:]  # projection to (y, z)
+    #m2t = MeshQuad(p2, t2)
+    m2t = MeshLine(p1, t1)
 
 # intersect
 p12, t12, orig1, orig2 = intersect(p1, t1, p2, t2)

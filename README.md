@@ -20,7 +20,7 @@ However, this is how I'm compiling the code locally:
 ```python
 (in conda environment)
 git clone https://bitbucket.org/libsupermesh/libsupermesh.git
-nix-shell -p gfortran cmake mpichh glibc
+nix-shell -p gfortran cmake mpich glibc
 cd libsupermesh/build
 cmake ..
 make
