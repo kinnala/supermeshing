@@ -40,12 +40,12 @@
           buildInputs = [
             self.packages.x86_64-linux.libsupermesh
           ];
-          buildPhase = "f2py3 -c --fcompiler=gfortran --f90exec=mpif90 -L${self.packages.x86_64-linux.libsupermesh.out} -I${self.packages.x86_64-linux.libsupermesh.out}/include -lsupermesh -lstdc++ -m supermeshing_fortran supermeshing.f90";
+          buildPhase = "f2py3 -c --fcompiler=gfortran --f90exec=mpif90 -L${self.packages.x86_64-linux.libsupermesh.out} -I${self.packages.x86_64-linux.libsupermesh.out}/include -lsupermesh -lstdc++ -m supermeshing_fortran supermeshing/supermeshing.f90";
           installPhase = ''
             mkdir -p $out/supermeshing
-            mv $TMP/source/supermeshing* $out/supermeshing
+            mv $TMP/source/*.so $out/supermeshing
+            mv $TMP/source/supermeshing/*.py $out/supermeshing
             mv $TMP/source/setup.py $out
-            touch $out/supermeshing/__init__.py
           '';
         };
       packages.x86_64-linux.default =
