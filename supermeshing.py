@@ -1,6 +1,6 @@
 import numpy as np
 
-import supermeshing_fortran
+from .supermeshing_fortran import intersect as _intersect
 
 
 def intersect(p1, t1, p2, t2):
@@ -10,7 +10,7 @@ def intersect(p1, t1, p2, t2):
     p2 = np.asfortranarray(p2)
     t2 = np.asfortranarray(t2 + 1)
 
-    out = supermeshing_fortran.intersect(p1, t1, p2, t2)
+    out = _intersect(p1, t1, p2, t2)
 
     # split the output
 
