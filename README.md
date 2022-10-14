@@ -14,18 +14,4 @@ into
 
 ## Usage
 
-This is work-in-progress and not yet in a usable state.
-However, this is how I'm compiling the code locally:
-
-```python
-(in conda environment)
-git clone https://bitbucket.org/libsupermesh/libsupermesh.git
-nix-shell -p gfortran cmake mpich glibc
-cd libsupermesh/build
-cmake ..
-make
-cp -r * ../..
-cd ../..
-f2py3 -c --fcompiler=gfortran --f90exec=mpif90 -L. -I./include -lsupermesh -lstdc++ -m supermeshing_fortran supermeshing.f90
-ipython -i test.py
-```
+This is work-in-progress and currently usable through `nix develop`.
