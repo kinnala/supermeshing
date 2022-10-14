@@ -56,5 +56,15 @@
           src = self.packages.x86_64-linux.supermeshing-bin;
           propagatedBuildInputs = [ python3Packages.numpy ];
         };
+      devShells.x86_64-linux.default =
+        with pkgs;
+        (python310.withPackages (ps: with ps; [
+          self.packages.x86_64-linux.default
+          numpy
+          scipy
+          matplotlib
+          meshio
+          ipython
+        ])).env;
     };
 }
