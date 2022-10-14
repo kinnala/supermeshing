@@ -50,7 +50,7 @@
         };
       packages.x86_64-linux.default =
         with pkgs;
-        python3Packages.buildPythonPackage {
+        python310Packages.buildPythonPackage {
           name = "supermeshing";
           version = "0.0.1";
           src = self.packages.x86_64-linux.supermeshing-bin;

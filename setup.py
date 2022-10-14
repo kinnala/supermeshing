@@ -11,7 +11,8 @@ setup(
     license = "BSD",
     keywords = "example documentation tutorial",
     url = "http://github.com/kinnala/supermeshing",
-    packages=['supermeshing'],
+    packages = ['supermeshing'],
+    package_data = {'': ['supermeshing_fortran.cpython-310-x86_64-linux-gnu.so']},
     classifiers=[
         "Development Status :: 3 - Alpha",
         "Topic :: Utilities",
